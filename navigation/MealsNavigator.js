@@ -8,6 +8,7 @@ import { createAppContainer } from 'react-navigation';
 import CategoriesScreen from '../screens/CategoriesScreen';
 import CategoryMealsScreen from '../screens/CategoryMealsScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
+import Colors from '../constants/Colors';
 
 
 //createStackNavigator ya nos devuelve un Componente de React!! con toda la
@@ -17,13 +18,36 @@ import MealDetailScreen from '../screens/MealDetailScreen';
 //createStackNavigator agrega los componentes a una pila o stack y te muestra
 //siempre la vista que corresponde al primer componente en el stack, en el top del stack
 //createStackNavigator NO va creando las vistas nuevas cada vez que navegamos!!
+//como segundo argumento de createStackNavigator puedo pasarle un objeto con configuracion extra para
+//las pantallas
 const MealsNavigator = createStackNavigator({
-    Categories: CategoriesScreen,//atajo para agregar un componente a la navegacion
+    Categories: {screen: CategoriesScreen, 
+     //puedo pasar configuraciones del navigationOptions desde acá y no solo desde el mismo componente
+        //este options tiene la mayor prioridad respecto al que se define en el mismo componente y respecto
+        //al default options que se pasa como segundo argumento a createStackNavigator
+        navigationOptions: {
+            headerTitle: 'Meal Categories'
+        }},//atajo para agregar un componente a la navegacion
     CategoryMeals: {//esta es otra forma de asignar el componente , 
         //porque permite agregar mas configuracion si fuera necesaria
-        screen: CategoryMealsScreen
+        screen: CategoryMealsScreen,
+       
     },
     MealDetail: MealDetailScreen
+},
+{ 
+    defaultNavigationOptions: {
+        headerTitle: 'A screen',
+        headerStyle: {
+            backgroundColor: Colors.primaryColor
+        },
+        headerTintColor: 'white'
+    },
+    //podemos usar otro estilo para la pantallas
+    mode:'modal',
+    //puedo indicar cual quiero que sea mi primera pantalla y esto primará sobre
+    //el orden en el que los especificqué en el primer argumento de createStackNavigator
+    //initialRouteName: 'MealDetail'
 });
 
 //al final tenemos que exportar el componente pero pasandolo primero por

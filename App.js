@@ -4,6 +4,12 @@ import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import MealsNavigator from './navigation/MealsNavigator';
 
+import { useScreens } from 'react-native-screens';
+
+//este metodo sirve para que RN use ciertos features de cada plataforma para optimizar
+//el manejo de las pantallas. por ejemplo el  Android usará Fragments!!
+useScreens();
+
 const fetchFonts = () => {
   return Font.loadAsync({
     "open-sans" : require('./assets/fonts/OpenSans-Regular.ttf'),
