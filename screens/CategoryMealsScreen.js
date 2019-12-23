@@ -1,17 +1,24 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import { CATEGORIES } from '../data/dummy-data';
+import { View, Text, StyleSheet, Button, FlatList } from 'react-native';
+import { CATEGORIES, MEALS } from '../data/dummy-data';
 import Colors from '../constants/Colors';
+import MealItem from '../components/MealItem';
 
 const CategoryMealsScreen = props => {
+
+    const renderMealItem = itemData => {
+        return (<MealItem title={itemData.item.title} onSelectMeal={()=>{}} />);
+    }
 
     //recuperamos parametros pasados por la vista anterior
     const catId = props.navigation.getParam('categoryId');
     const selectedCategory = CATEGORIES.find(cat=> cat.id === catId);
 
+    const displayedMeals = MEALS.filter(meal=> meal.categoryIds.indexOf(catId) >= 0);
+
     return (
         <View style={styles.screen}>
-            <Text>The CategoryMeals Screen!!.</Text>
+           {/*  <Text>The CategoryMeals Screen!!.</Text>
 
             <Text>{selectedCategory.title}</Text>
 
@@ -27,7 +34,10 @@ const CategoryMealsScreen = props => {
                 //pop quita el primer componente del stack (osea el actual) y por consiguiente
                 //nos mostrará por defecto el anterior del stack, creando el efecto back
                 props.navigation.pop();
-            }}/>
+            }}/> */}
+            
+            <FlatList data={displayedMeals} keyExtractor={(item,index)=> item.id}
+              renderItem={renderMealItem} style={{width: '100%'}}/>
         </View>
     );
 }
