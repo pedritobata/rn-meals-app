@@ -4,10 +4,12 @@
 //expo install react-native-gesture-handler react-native-reanimated
 
 import { createStackNavigator } from 'react-navigation-stack';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createAppContainer } from 'react-navigation';
 import CategoriesScreen from '../screens/CategoriesScreen';
 import CategoryMealsScreen from '../screens/CategoryMealsScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
 import Colors from '../constants/Colors';
 
 
@@ -50,7 +52,14 @@ const MealsNavigator = createStackNavigator({
     //initialRouteName: 'MealDetail'
 });
 
+//creamos otro navigator en forma de tabs
+//este navigator incluirá al anterior stack en uno de sus tabs!!
+const MealsFavTabNavigator = createBottomTabNavigator({
+    Meals: MealsNavigator,//recordar que MealsNavigator es un componente de react valido
+    favorites: FavoritesScreen
+});
+
 //al final tenemos que exportar el componente pero pasandolo primero por
 //un hoc que es necesario para que funque bien
-export default createAppContainer(MealsNavigator);
+export default createAppContainer(MealsFavTabNavigator);
 

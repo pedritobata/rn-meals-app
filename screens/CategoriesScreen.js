@@ -7,6 +7,8 @@ import CategoryGridTile from '../components/CategoryGridTile';
 const CategoriesScreen = props => {
 
   const renderGridItem = itemData => {
+      //params es otro atributo que podemos configurar en navigate
+    //sirve para pasar parametros a la otra vista. se puede pasar LO QUE SEA y CUANTOS QUIERA
     return (
         <CategoryGridTile title={itemData.item.title} color={itemData.item.color}  onSelect={()=> {
           props.navigation.navigate({routeName: 'CategoryMeals', params: {

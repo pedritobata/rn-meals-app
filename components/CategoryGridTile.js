@@ -9,8 +9,7 @@ const CategoryGridTile = props => {
     }
 
   return (
-    //params es otro atributo que podemos configurar en navigate
-    //sirve para pasar parametros a la otra vista. se puede pasar LO QUE SEA y CUANTOS QUIERA
+  
     <TouchableCmp style={styles.gridItem} onPress={props.onSelect}>
       <View style={{ ...styles.container, backgroundColor: props.color }}>
         <Text style={styles.title} numberOfLines={2}>{props.title}</Text>
@@ -30,7 +29,13 @@ const styles = StyleSheet.create({
     margin: 15,
     height: 100,
     borderRadius: 10,
-    overflow: 'hidden'//para que los elementos hijos no se vayan a desbordar del padre
+    //overflow: 'hidden',//para que los elementos hijos no se vayan a desbordar del padre
+    //a parte , guarda!! , este overflow esta haciendo que desaparezca el shadow de nuestros elementos del grid
+    //en IOS.  Para Android bastará con definir el elevation en este estilo gridItem y ya no en container. PERO ojo,
+    elevation: 5,
+  //android necesita el overflow hidden para que se vea el ripl effect, es decir el parapadeo al tocar un elemento
+    //para recobrar el shadow en ios, sin deshacernos del overflow, haremos un condicional
+    overflow: Platform.OS === 'android' && Platform.Version >=21 ? 'hidden' : 'visible'
   },
   container: {
     flex: 1,
@@ -39,7 +44,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.26,
     shadowOffset: { height: 2, width: 0 },
     padding: 13,
-    elevation: 3,//esto es para android
+    //elevation: 3,//esto es para android
     shadowRadius: 10,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',

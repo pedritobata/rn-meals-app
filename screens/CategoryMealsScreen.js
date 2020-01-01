@@ -7,7 +7,16 @@ import MealItem from '../components/MealItem';
 const CategoryMealsScreen = props => {
 
     const renderMealItem = itemData => {
-        return (<MealItem title={itemData.item.title} onSelectMeal={()=>{}} />);
+        return (<MealItem title={itemData.item.title} 
+            duration={itemData.item.duration} 
+            image={itemData.item.imageUrl}
+            complexity={itemData.item.complexity.toUpperCase()}
+            affordability={itemData.item.affordability.toUpperCase()}
+            onSelectMeal={()=>{
+                props.navigation.navigate({routeName: 'MealDetail', params: {
+                    mealId: itemData.item.id
+                }})
+            }} />);
     }
 
     //recuperamos parametros pasados por la vista anterior
@@ -66,7 +75,8 @@ const styles = StyleSheet.create({
     screen: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        padding: 8
     }
 });
 
