@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Button, FlatList , TouchableOpacity} from "reac
 import { CATEGORIES } from "../data/dummy-data";
 import Colors from '../constants/Colors';
 import CategoryGridTile from '../components/CategoryGridTile';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import HeaderButton from '../components/HeaderButton';
 
 const CategoriesScreen = props => {
 
@@ -54,12 +56,21 @@ const CategoriesScreen = props => {
 //Esto es posible ya que a fin de cuentas mi componente es una funcion de js , la cual
 //termina siendo un objeto de JS!! 
 //los atributos que podemos agregar para que react navigation los entienda estan la documentacion
-CategoriesScreen.navigationOptions = {
+CategoriesScreen.navigationOptions = navData => {
+
+  return {
     headerTitle: "Meal Categories!!!",
     headerStyle: {
         backgroundColor: Colors.primaryColor
     },
-    headerTintColor: 'white'
+    headerTintColor: 'white',
+    headerLeft: <HeaderButtons HeaderButtonComponent={HeaderButton}>
+      <Item  title="Menu" iconName="ios-menu" onPress={() => {
+        navData.navigation.toggleDrawer();
+      }} />
+    </HeaderButtons>
+  }
+    
 }
 
 const styles = StyleSheet.create({

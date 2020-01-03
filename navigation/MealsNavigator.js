@@ -3,14 +3,31 @@
 //Y CON EXPO: para que expo baje las versiones compatibles a mi proyecto!!
 //expo install react-native-gesture-handler react-native-reanimated
 
+import React from 'react';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createAppContainer } from 'react-navigation';
 import CategoriesScreen from '../screens/CategoriesScreen';
 import CategoryMealsScreen from '../screens/CategoryMealsScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
+import FiltersScreen from '../screens/FiltersScreen';
 import Colors from '../constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
+
+//este paquete necesita que tambien hayamos instalado react-native-paper
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import { Platform } from 'react-native';
+
+
+    const defaultStackNavOptions = {
+        headerTitle: 'A screen',
+        headerStyle: {
+            backgroundColor: Colors.primaryColor
+        },
+        headerTintColor: 'white'
+    }
 
 
 //createStackNavigator ya nos devuelve un Componente de React!! con toda la
@@ -38,13 +55,7 @@ const MealsNavigator = createStackNavigator({
     MealDetail: MealDetailScreen
 },
 { 
-    defaultNavigationOptions: {
-        headerTitle: 'A screen',
-        headerStyle: {
-            backgroundColor: Colors.primaryColor
-        },
-        headerTintColor: 'white'
-    },
+    defaultNavigationOptions: defaultStackNavOptions,
     //podemos usar otro estilo para la pantallas
     mode:'modal',
     //puedo indicar cual quiero que sea mi primera pantalla y esto primará sobre
@@ -52,14 +63,68 @@ const MealsNavigator = createStackNavigator({
     //initialRouteName: 'MealDetail'
 });
 
+//OJO que los navigators son independientes entre si. cada stack , cada tab es independiente
+//es como que cada uno lleva su historial propio!!!
+const FavNavigator = createStackNavigator({
+    Favorites: FavoritesScreen,
+    MealDetail: MealDetailScreen
+},
+{
+    defaultNavigationOptions: defaultStackNavOptions
+});
+
+const tabScreenConfig = {
+    //recordar que MealsNavigator es un componente de react valido
+    Meals: {screen: MealsNavigator, navigationOptions: {
+        tabBarIcon: tabInfo => {
+            return <Ionicons name="ios-restaurant" size={25} color={tabInfo.tintColor}/>
+        },
+        //esta propiedad SOLO FUNCINONA cuando shifting es true en la configuracion de createMaterialBottomTabNavigator
+        tabBarColor: Colors.primaryColor
+    } },
+    Favorites: {screen: FavNavigator, navigationOptions: {
+        //tabBarLabel: "Favorites!",  puedo poner el label que quiera al tab
+        //si no lo hago, react toma el nombre del atributo que define mi elemento actual "Favorites"
+        tabBarIcon: tabInfo => {
+            return <Ionicons name="ios-star" size={25} color={tabInfo.tintColor}/>
+        },
+        tabBarColor: Colors.accentColor
+    }}
+}
+
 //creamos otro navigator en forma de tabs
 //este navigator incluirá al anterior stack en uno de sus tabs!!
-const MealsFavTabNavigator = createBottomTabNavigator({
-    Meals: MealsNavigator,//recordar que MealsNavigator es un componente de react valido
-    favorites: FavoritesScreen
+const MealsFavTabNavigator = Platform.OS === 'android' ? createMaterialBottomTabNavigator(tabScreenConfig,
+     {
+         //para material de andriod la propiedad del tint se pone directamente asi:
+        activeColor: 'white',//Colors.primaryColor,
+        shifting: true //esto es para un efecto de movimiento al tocar los iconos
+        //si se quiere cambiar el color del tapBar cuando shifting es false, se debe usar:
+        //notar que shifting tiene prioridad sobre barStyle de modo que si shifting es true entonces
+        //react ignora a barStyle
+        , barStyle: {
+            backgroundColor: Colors.primaryColor
+        }
+}) :
+  createBottomTabNavigator(tabScreenConfig,
+{
+    tabBarOptions: {
+        activeTintColor: Colors.accentColor
+    }
+});
+
+//estamos creando este navigator de un solo componente solo porque necesitamos que
+//el header tenga el titulo que queremos
+const FiltersNavigator = createStackNavigator({
+    Filters: FiltersScreen
+});
+
+const MainNavigator = createDrawerNavigator({
+    MealsFavs: MealsFavTabNavigator,
+    Filters: FiltersNavigator
 });
 
 //al final tenemos que exportar el componente pero pasandolo primero por
 //un hoc que es necesario para que funque bien
-export default createAppContainer(MealsFavTabNavigator);
+export default createAppContainer(MainNavigator);
 
