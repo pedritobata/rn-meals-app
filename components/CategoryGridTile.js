@@ -5,7 +5,7 @@ import { hide } from "expo/build/launch/SplashScreen";
 const CategoryGridTile = props => {
     let TouchableCmp = TouchableOpacity;
     if(Platform.OS === 'android' && Platform.Version >= 21){
-        TouchableCmp = TouchableNativeFeedback;
+        //TouchableCmp = TouchableNativeFeedback;
     }
 
   return (

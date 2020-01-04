@@ -15,7 +15,8 @@ const MealList = props => {
                 //suscrito en el navigator directamente, por eso,
                 //lo estamos pasando como props desde el componente que invoca e este MealList
                 props.navigation.navigate({routeName: 'MealDetail', params: {
-                    mealId: itemData.item.id
+                    mealId: itemData.item.id,
+                    mealTitle: itemData.item.title
                 }})
             }} />);
     }

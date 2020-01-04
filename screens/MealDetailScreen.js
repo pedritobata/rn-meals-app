@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { ScrollView,View, Text, StyleSheet, Button, Image, Platform } from 'react-native';
-import { MEALS } from '../data/dummy-data';
+//import { MEALS } from '../data/dummy-data';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import HeaderButton from '../components/HeaderButton';
 import DefaultText from '../components/DefaultText';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleFavorite } from '../store/actions/meals';
 
 
 //creamos un componente helper dentro de este componente en el que estamos
@@ -18,8 +20,20 @@ const ListItem = props => {
 
 const MealDetailScreen = props => {
 
+    const availableMeals = useSelector(state => state.meals.meals);
+
+    const dispatch = useDispatch();
+
     const mealId = props.navigation.getParam('mealId');
-    const selectedMeal = MEALS.find(item => item.id === mealId);
+    const selectedMeal = availableMeals.find(item => item.id === mealId);
+
+    const toggleFavoriteHandler = useCallback(() => {
+        dispatch(toggleFavorite(mealId));
+    },[dispatch, mealId]);
+
+    useEffect(() => {
+        props.navigation.setParams({toggleFav: toggleFavoriteHandler});
+    }, [toggleFavoriteHandler]);
 
     return (
         <ScrollView>
@@ -55,20 +69,24 @@ const MealDetailScreen = props => {
 }
 
 MealDetailScreen.navigationOptions = itemData => {
-    const mealId = itemData.navigation.getParam('mealId');
-    const selectedMeal = MEALS.find(meal=> meal.id === mealId);
+    //const mealId = itemData.navigation.getParam('mealId');
+    //const selectedMeal = MEALS.find(meal=> meal.id === mealId);
+
+    //este dato lo estamos obteniendo desde el componente que invoca a este componente, el cual es MealList
+    //NO estamos usando el store de redux para este dato
+    const mealTitle = itemData.navigation.getParam('mealTitle');
+
+    const toggleFavorite = itemData.navigation.getParam('toggleFav');
 
     return {
-        headerTitle: selectedMeal.title,
+        headerTitle: mealTitle,
         //aca puedo agregar algun elemento en la toolbar , a la derecha o izquierda
         //el problema es que darle estilos es tranca!!!
         //mejor usaremos un package: react-navigation-header-buttons
        // headerRight: <Text>FAV!</Text>
        headerRight: <HeaderButtons HeaderButtonComponent={HeaderButton}>
            {/* Se puede agregar varios Items!!! */}
-           <Item title="Favorite" iconName='ios-star' onPress={() => {
-               console.log('Marked as favorite!!');
-           }}/>
+           <Item title="Favorite" iconName='ios-star' onPress={toggleFavorite}/>
        </HeaderButtons>
     };
 }

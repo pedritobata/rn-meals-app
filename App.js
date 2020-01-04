@@ -4,6 +4,9 @@ import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import MealsNavigator from './navigation/MealsNavigator';
 
+import { createStore, combineReducers } from 'redux';
+import { Provider } from 'react-redux';
+import mealsReducer from './store/reducers/meals';
 import { useScreens, enableScreens } from 'react-native-screens';
 
 //este metodo sirve para que RN use ciertos features de cada plataforma para optimizar
@@ -18,6 +21,12 @@ const fetchFonts = () => {
   });
 }
 
+const rootReducer = combineReducers({
+  meals: mealsReducer
+})
+
+const store = createStore(rootReducer);
+
 export default function App() {
 
   const [fontLoaded, setFontLoaded] = useState(false);
@@ -28,7 +37,9 @@ export default function App() {
 
 
   return (
-    <MealsNavigator  />
+    <Provider store={store}>
+      <MealsNavigator  />
+    </Provider>
   );
 }
 
