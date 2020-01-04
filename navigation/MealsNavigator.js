@@ -18,13 +18,19 @@ import { Ionicons } from '@expo/vector-icons';
 
 //este paquete necesita que tambien hayamos instalado react-native-paper
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
-import { Platform } from 'react-native';
+import { Platform , Text} from 'react-native';
 
 
     const defaultStackNavOptions = {
         headerTitle: 'A screen',
         headerStyle: {
             backgroundColor: Colors.primaryColor
+        },
+        headerTitleStyle: {
+            fontFamily: "open-sans-bold"
+        },
+        headerBackTitleStyle: {
+            fontFamily: "open-sans"
         },
         headerTintColor: 'white'
     }
@@ -80,7 +86,12 @@ const tabScreenConfig = {
             return <Ionicons name="ios-restaurant" size={25} color={tabInfo.tintColor}/>
         },
         //esta propiedad SOLO FUNCINONA cuando shifting es true en la configuracion de createMaterialBottomTabNavigator
-        tabBarColor: Colors.primaryColor
+        tabBarColor: Colors.primaryColor,
+        //para android solo puedo modificar el label del tab desde acá. en ios lo puedo hacer desde
+        //la configuracion del segundo argumento (la default)
+        //cuando es ios, solo pongo el label del tab y esto hará merge con el resto de configuraciones que
+        //haya puesto en el segundo argumento
+        tabBarLabel: Platform.OS === 'android' ? <Text style={{fontFamily: "open-sans"}}>Meals</Text> : "Meals!!"
     } },
     Favorites: {screen: FavNavigator, navigationOptions: {
         //tabBarLabel: "Favorites!",  puedo poner el label que quiera al tab
@@ -88,13 +99,15 @@ const tabScreenConfig = {
         tabBarIcon: tabInfo => {
             return <Ionicons name="ios-star" size={25} color={tabInfo.tintColor}/>
         },
-        tabBarColor: Colors.accentColor
+        tabBarColor: Colors.accentColor,
+        tabBarLabel: Platform.OS === 'android' ? <Text style={{fontFamily: "open-sans"}}>Favorites</Text> : "Favorites!!"
     }}
 }
 
 //creamos otro navigator en forma de tabs
 //este navigator incluirá al anterior stack en uno de sus tabs!!
-const MealsFavTabNavigator = Platform.OS === 'android' ? createMaterialBottomTabNavigator(tabScreenConfig,
+const MealsFavTabNavigator = Platform.OS === 'android' ? 
+    createMaterialBottomTabNavigator(tabScreenConfig,
      {
          //para material de andriod la propiedad del tint se pone directamente asi:
         activeColor: 'white',//Colors.primaryColor,
@@ -109,6 +122,10 @@ const MealsFavTabNavigator = Platform.OS === 'android' ? createMaterialBottomTab
   createBottomTabNavigator(tabScreenConfig,
 {
     tabBarOptions: {
+        //para android No hay esta propiedad. se tiene que ajustar el esilo del label en el tabScreenConfig
+        labelStyle: {
+            fontFamily: "open-sans"
+        },
         activeTintColor: Colors.accentColor
     }
 });
@@ -117,11 +134,27 @@ const MealsFavTabNavigator = Platform.OS === 'android' ? createMaterialBottomTab
 //el header tenga el titulo que queremos
 const FiltersNavigator = createStackNavigator({
     Filters: FiltersScreen
+},
+{
+   /*  navigationOptions: {
+        drawerLabel: "Filters!!"
+    }, */
+    defaultNavigationOptions: defaultStackNavOptions
 });
 
 const MainNavigator = createDrawerNavigator({
-    MealsFavs: MealsFavTabNavigator,
+    MealsFavs: {screen: MealsFavTabNavigator, navigationOptions: {
+        drawerLabel: "Meals",
+    }},
     Filters: FiltersNavigator
+},
+{
+    contentOptions: {
+        activeTintColor: Colors.accentColor,
+        labelStyle: {
+            fontFamily: "open-sans"
+        }
+    }
 });
 
 //al final tenemos que exportar el componente pero pasandolo primero por
