@@ -26,6 +26,8 @@ const MealDetailScreen = props => {
 
     const mealId = props.navigation.getParam('mealId');
     const selectedMeal = availableMeals.find(item => item.id === mealId);
+    const currentMealIsFavorite = 
+        useSelector(state => state.meals.favoriteMeals.some(meal => meal.id === mealId));
 
     const toggleFavoriteHandler = useCallback(() => {
         dispatch(toggleFavorite(mealId));
@@ -34,6 +36,10 @@ const MealDetailScreen = props => {
     useEffect(() => {
         props.navigation.setParams({toggleFav: toggleFavoriteHandler});
     }, [toggleFavoriteHandler]);
+
+    useEffect(() => {
+        props.navigation.setParams({isFav: currentMealIsFavorite});
+    }, [currentMealIsFavorite]);
 
     return (
         <ScrollView>
@@ -78,6 +84,8 @@ MealDetailScreen.navigationOptions = itemData => {
 
     const toggleFavorite = itemData.navigation.getParam('toggleFav');
 
+    const isFavorite = itemData.navigation.getParam('isFav');
+
     return {
         headerTitle: mealTitle,
         //aca puedo agregar algun elemento en la toolbar , a la derecha o izquierda
@@ -86,7 +94,7 @@ MealDetailScreen.navigationOptions = itemData => {
        // headerRight: <Text>FAV!</Text>
        headerRight: <HeaderButtons HeaderButtonComponent={HeaderButton}>
            {/* Se puede agregar varios Items!!! */}
-           <Item title="Favorite" iconName='ios-star' onPress={toggleFavorite}/>
+           <Item title="Favorite" iconName={isFavorite ? 'ios-star' : 'ios-star-outline'} onPress={toggleFavorite}/>
        </HeaderButtons>
     };
 }

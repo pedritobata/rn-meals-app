@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Switch, Platform } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import HeaderButton from '../components/HeaderButton';
 import Colors from '../constants/Colors';
+import { setFilters } from '../store/actions/meals';
+import { useDispatch } from 'react-redux';
 
 //componente helper
 const FilterSwitch = props => {
@@ -27,6 +29,8 @@ const FiltersScreen = props => {
     const [ isVegan, setIsVegan ] = useState(false);
     const [ isVegetarian, setIsVegetarian] = useState(false);
 
+    const dispatch = useDispatch();
+
 
     //uso useCallback para que solo se regenere la funcion si cambiara algunos de los estados y evitar
     //posibles rerenders innecesarios
@@ -37,7 +41,7 @@ const FiltersScreen = props => {
             vegan: isVegan,
             vegetarian: isVegetarian
         }
-        console.log(appliedFilters);
+        dispatch(setFilters(appliedFilters));
     }, [isGlutenFree,isLactoseFree,isVegan,isVegetarian]);
 
     useEffect(() => {

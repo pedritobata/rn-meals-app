@@ -1,10 +1,15 @@
 import React from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import MealItem from './MealItem';
+import { useSelector } from 'react-redux';
 
 const MealList = props => {
 
+    
+    const favMeals = useSelector(state => state.meals.favoriteMeals);
+
     const renderMealItem = itemData => {
+        const isFavorite = favMeals.some(meal=>meal.id === itemData.item.id);
         return (<MealItem title={itemData.item.title} 
             duration={itemData.item.duration} 
             image={itemData.item.imageUrl}
@@ -16,7 +21,11 @@ const MealList = props => {
                 //lo estamos pasando como props desde el componente que invoca e este MealList
                 props.navigation.navigate({routeName: 'MealDetail', params: {
                     mealId: itemData.item.id,
-                    mealTitle: itemData.item.title
+                    mealTitle: itemData.item.title,
+                    isfav: isFavorite//mandamos este parametro desde aca para que la estrellita de favoritos
+                    //que esta en el detail screen se renderice rapido y no espere al useeffect que tambien 
+                    //hace lo mismo en ese compoente, pero mas lento, osea despues de renderizarse el componente
+                    //se renderiza la estrellita
                 }})
             }} />);
     }
